@@ -141,7 +141,7 @@ def get_uri(file):
     return 'file://%s' % (urllib.parse.quote(path, safe="%/:=&?~#+!$,;'@()*[]"))
 
 
-def startEvince(line, pdf_file, editor_command):
+def startEvince(line, tex_file, pdf_file, editor_command):
     logger = logging.getLogger('evince_synctex')
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler())
@@ -157,7 +157,8 @@ def startEvince(line, pdf_file, editor_command):
         pdf_uri, False, dbus_interface=EV_DAEMON_IFACE)
 
     if (line is not None and already_opened):
-        tex_file = os.path.splitext(pdf_file)[0] + '.tex'
+        if (tex_file is None):
+            tex_file = os.path.splitext(pdf_file)[0] + '.tex'
         dbus_name = daemon.FindDocument(
             pdf_uri, True, dbus_interface=EV_DAEMON_IFACE)
         window = bus.get_object(dbus_name, EV_WINDOW_PATH)
@@ -190,6 +191,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__.lstrip())
     parser.add_argument('-f', '--forward', type=int,
                         dest='line', metavar='LINE', help='Performs a forward search with specified line number')
+    parser.add_argument('-t', '--tex',
+                        dest='tex_file', metavar='TEX_FILE', help='Specifies the TeX file for which the line number is given')
     parser.add_argument('pdf_file', metavar='PDF_FILE',
                         help='The PDF file to display')
     parser.add_argument('editor_command', metavar='EDITOR_COMMAND',
