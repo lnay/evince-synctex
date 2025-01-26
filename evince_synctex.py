@@ -25,7 +25,6 @@ Provides a command-line-friendly SyncTeX integration for Evince.
 
 import os
 import re
-import sys
 import dbus
 import shlex
 import logging
